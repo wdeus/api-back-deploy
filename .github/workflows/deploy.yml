@@ -9,12 +9,12 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
+    steps:      
       - name: Pull Docker image from Docker Hub
         run: docker pull pixelapi/spring_app:latest
+
+      - name: Delete old container
+        run: sudo docker rm -f spring_app_container
 
       - name: Run Docker container
         run: docker run -d -p 8080:8080 --name spring_app_container pixelapi/spring_app:latest
