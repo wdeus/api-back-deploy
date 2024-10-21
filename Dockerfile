@@ -11,7 +11,7 @@ COPY . .
 RUN mvn package -DskipTests=true
 
 # Set environment variables if needed
-ENV DATASOURCE_URL=jdbc:postgresql://localhost:5432/dash
+ENV DATASOURCE_URL=jdbc:postgresql://postgresql:5432/dash
 ENV DATASOURCE_USERNAME=admin
 ENV DATASOURCE_PASSWORD=admin
 
