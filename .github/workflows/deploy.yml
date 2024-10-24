@@ -1,20 +1,48 @@
-name: Java CI with Maven
+name: Deploy Automatico
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - "main"  
+      - "develop"  
+      - "qas"  
 
 jobs:
-  deploy:
+  deploy-dev:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: self-hosted-dev
+    steps:
+      - name: Pull Docker image for DEV
+        run: docker pull pixelapi/spring_app:dev-latest
+
+      - name: Delete old container (DEV)
+        run: sudo docker rm -f spring_app_container_dev
+
+      - name: Run Docker container (DEV)
+        run: docker run -d -p 8080:8080 --name spring_app_container_dev --network api_network pixelapi/spring_app:dev-latest
+
+  deploy-hml:
+    if: github.ref == 'refs/heads/qas'
+    runs-on: self-hosted-hml
+    steps:
+      - name: Pull Docker image for HML
+        run: docker pull pixelapi/spring_app:hml-latest
+
+      - name: Delete old container (HML)
+        run: sudo docker rm -f spring_app_container_hml
+
+      - name: Run Docker container (HML)
+        run: docker run -d -p 8080:8080 --name spring_app_container_hml --network api_network pixelapi/spring_app:hml-latest
+
+  deploy-prod:
+    if: github.ref == 'refs/heads/main'
     runs-on: self-hosted
-    steps:      
-      - name: Pull Docker image from Docker Hub
-        run: docker pull pixelapi/spring_app:latest
+    steps:
+      - name: Pull Docker image for PROD
+        run: docker pull pixelapi/spring_app:prod-latest
 
-      - name: Delete old container
-        run: sudo docker rm -f spring_app_container
+      - name: Delete old container (PROD)
+        run: sudo docker rm -f spring_app_container_prod
 
-      - name: Run Docker container
-        run: docker run -d -p 8080:8080 --name spring_app_container --network api_network pixelapi/spring_app:latest
+      - name: Run Docker container (PROD)
+        run: docker run -d -p 8080:8080 --name spring_app_container_prod --network api_network pixelapi/spring_app:latest
