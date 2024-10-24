@@ -39,7 +39,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull Docker image for PROD
-        run: docker pull pixelapi/spring_app:prod-latest
+        run: docker pull pixelapi/spring_app:latest
 
       - name: Delete old container (PROD)
         run: sudo docker rm -f spring_app_container_prod
